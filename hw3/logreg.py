@@ -1,4 +1,5 @@
 import numpy as np
+import csv
 np.random.seed(42)
 import matplotlib.pyplot as plt
 import logging
@@ -8,7 +9,7 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S')
 
 # GLOBAL PARAMETERS FOR STOCHASTIC GRADIENT DESCENT
-step_size=0.0001
+step_size=0.00001
 max_iters=1000
 
 def main():
@@ -16,6 +17,7 @@ def main():
   # Load the training data
   logging.info("Loading data")
   X_train, y_train, X_test = loadData()
+
 
   logging.info("\n---------------------------------------------------------------------------\n")
 
@@ -51,16 +53,30 @@ def main():
 
   logging.info("\n---------------------------------------------------------------------------\n")
 
+
   logging.info("Running cross-fold validation for bias case:")
 
+
   # Perform k-fold cross
-  for k in [2,3,4, 5, 10, 20, 50]:
-    cv_acc, cv_std = kFoldCrossVal(X_train_bias, y_train, k)
-    logging.info("{}-fold Cross Val Accuracy -- Mean (stdev): {:.4}% ({:.4}%)".format(k,cv_acc*100, cv_std*100))
+  # for k in [2,3,4, 5, 10, 20, 50]:
+  #   cv_acc, cv_std = kFoldCrossVal(X_train_bias, y_train, k)
+  #   logging.info("{}-fold Cross Val Accuracy -- Mean (stdev): {:.4}% ({:.4}%)".format(k,cv_acc*100, cv_std*100))
 
   ####################################################
   # Write the code to make your test submission here
   ####################################################
+
+  X_test_bias = np.insert(X_test, 0, np.ones(233), axis=1)
+  test_pred = X_test_bias@w >= 0 
+  output = [[y, 1 if test_pred[y] else 0] for y in range(len(test_pred))]
+  
+  with open('submission.csv','w', newline='') as out:
+      csv_out = csv.writer(out)
+      csv_out.writerow(['id','type'])
+      for row in output:
+        num, y = row
+        csv_out.writerow((num, y))
+
 
   raise Exception('Student error: You haven\'t implemented the code in main() to make test predictions.')
 
@@ -74,8 +90,7 @@ def calculateNegativeLogLikelihood(X,y,w):
   # -sum(ylogsigma(wx) + (1-y)log(1-sigma(wtx))
   x = np.matmul(X,w)
   z = 1/(1 + np.exp(-x))
-
-  negative_log_like = -sum(y*np.log(z)+(1-y)*np.log(1-z))
+  negative_log_like = -sum(y*np.log(z+0.0000001)+(1-y)*np.log(1-z+0.00000001))
   return negative_log_like
  
 
