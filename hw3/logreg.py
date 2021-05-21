@@ -9,8 +9,8 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S')
 
 # GLOBAL PARAMETERS FOR STOCHASTIC GRADIENT DESCENT
-step_size=0.00001
-max_iters=1000
+step_size=.0002
+max_iters=800
 
 def main():
 
@@ -58,9 +58,9 @@ def main():
 
 
   # Perform k-fold cross
-  # for k in [2,3,4, 5, 10, 20, 50]:
-  #   cv_acc, cv_std = kFoldCrossVal(X_train_bias, y_train, k)
-  #   logging.info("{}-fold Cross Val Accuracy -- Mean (stdev): {:.4}% ({:.4}%)".format(k,cv_acc*100, cv_std*100))
+  for k in [2,3,4, 5, 10, 20, 50]:
+    cv_acc, cv_std = kFoldCrossVal(X_train_bias, y_train, k)
+    logging.info("{}-fold Cross Val Accuracy -- Mean (stdev): {:.4}% ({:.4}%)".format(k,cv_acc*100, cv_std*100))
 
   ####################################################
   # Write the code to make your test submission here
